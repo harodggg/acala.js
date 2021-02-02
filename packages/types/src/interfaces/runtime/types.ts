@@ -1,14 +1,13 @@
 // Auto-generated via `yarn polkadot-types-from-defs`, do not edit
 /* eslint-disable */
 
-import { ITuple } from '@polkadot/types/types';
-import { Compact, Enum, Int, Option, Struct, U8aFixed, Vec } from '@polkadot/types/codec';
-import { GenericAccountId, GenericAccountIndex, GenericAddress, GenericBlock, GenericCall, GenericConsensusEngineId } from '@polkadot/types/generic';
-import { Bytes, DoNotConstruct, Null, StorageKey, bool, i128, u128, u32, u64, u8 } from '@polkadot/types/primitive';
-import { CurrencyId } from '@acala-network/types/interfaces/primitives';
-import { Price } from '@open-web3/orml-types/interfaces/prices';
-import { AuthorityId } from '@polkadot/types/interfaces/consensus';
-import { Signature } from '@polkadot/types/interfaces/extrinsics';
+import type { Bytes, Compact, DoNotConstruct, Enum, GenericAccountId, GenericAccountIndex, GenericBlock, GenericCall, GenericConsensusEngineId, GenericLookupSource, GenericMultiAddress, Int, Null, StorageKey, Struct, U8aFixed, UInt, Vec, u16, u32, u64, u8 } from '@polkadot/types';
+import type { ITuple } from '@polkadot/types/types';
+import type { AuthoritysOriginId, CurrencyId } from '@acala-network/types/interfaces/primitives';
+import type { Price } from '@open-web3/orml-types/interfaces/traits';
+import type { AuthorityId } from '@polkadot/types/interfaces/consensus';
+import type { Signature } from '@polkadot/types/interfaces/extrinsics';
+import type { SystemOrigin } from '@polkadot/types/interfaces/system';
 
 /** @name AccountId */
 export interface AccountId extends GenericAccountId {}
@@ -20,40 +19,16 @@ export interface AccountIdOf extends AccountId {}
 export interface AccountIndex extends GenericAccountIndex {}
 
 /** @name Address */
-export interface Address extends GenericAddress {}
+export interface Address extends LookupSource {}
 
-/** @name Amount */
-export interface Amount extends i128 {}
-
-/** @name AmountOf */
-export interface AmountOf extends Amount {}
+/** @name AsOriginId */
+export interface AsOriginId extends AuthoritysOriginId {}
 
 /** @name AssetId */
 export interface AssetId extends u32 {}
 
-/** @name AuctionId */
-export interface AuctionId extends u32 {}
-
-/** @name AuctionIdLinkedItem */
-export interface AuctionIdLinkedItem extends Struct {
-  readonly prev: Option<AuctionId>;
-  readonly next: Option<AuctionId>;
-}
-
-/** @name AuctionIdOf */
-export interface AuctionIdOf extends AuctionId {}
-
-/** @name AuctionItem */
-export interface AuctionItem extends Struct {
-  readonly owner: AccountId;
-  readonly currencyId: CurrencyId;
-  readonly amount: Balance;
-  readonly target: Balance;
-  readonly startTime: BlockNumber;
-}
-
 /** @name Balance */
-export interface Balance extends u128 {}
+export interface Balance extends UInt {}
 
 /** @name BalanceOf */
 export interface BalanceOf extends Balance {}
@@ -67,6 +42,12 @@ export interface BlockNumber extends u32 {}
 /** @name Call */
 export interface Call extends GenericCall {}
 
+/** @name CallHash */
+export interface CallHash extends Hash {}
+
+/** @name CallHashOf */
+export interface CallHashOf extends CallHash {}
+
 /** @name ChangesTrieConfiguration */
 export interface ChangesTrieConfiguration extends Struct {
   readonly digestInterval: u32;
@@ -78,21 +59,6 @@ export interface Consensus extends ITuple<[ConsensusEngineId, Bytes]> {}
 
 /** @name ConsensusEngineId */
 export interface ConsensusEngineId extends GenericConsensusEngineId {}
-
-/** @name CurrencyIdOf */
-export interface CurrencyIdOf extends CurrencyId {}
-
-/** @name DebitAmount */
-export interface DebitAmount extends Amount {}
-
-/** @name DebitAmountOf */
-export interface DebitAmountOf extends DebitAmount {}
-
-/** @name DebitBalance */
-export interface DebitBalance extends Balance {}
-
-/** @name DebitBalanceOf */
-export interface DebitBalanceOf extends Balance {}
 
 /** @name Digest */
 export interface Digest extends Struct {
@@ -117,33 +83,6 @@ export interface DigestItem extends Enum {
   readonly asPreRuntime: PreRuntime;
 }
 
-/** @name DispatchClass */
-export interface DispatchClass extends Enum {
-  readonly isNormal: boolean;
-  readonly isOperational: boolean;
-  readonly isMandatory: boolean;
-}
-
-/** @name DispatchInfo */
-export interface DispatchInfo extends Struct {
-  readonly weight: Weight;
-  readonly class: DispatchClass;
-  readonly paysFee: Pays;
-}
-
-/** @name DispatchInfoTo190 */
-export interface DispatchInfoTo190 extends Struct {
-  readonly weight: Weight;
-  readonly class: DispatchClass;
-}
-
-/** @name DispatchInfoTo244 */
-export interface DispatchInfoTo244 extends Struct {
-  readonly weight: Weight;
-  readonly class: DispatchClass;
-  readonly paysFee: bool;
-}
-
 /** @name ExtrinsicsWeight */
 export interface ExtrinsicsWeight extends Struct {
   readonly normal: Weight;
@@ -156,14 +95,38 @@ export interface Fixed128 extends Int {}
 /** @name Fixed64 */
 export interface Fixed64 extends Int {}
 
+/** @name FixedI128 */
+export interface FixedI128 extends Int {}
+
+/** @name FixedI64 */
+export interface FixedI64 extends Int {}
+
+/** @name FixedU128 */
+export interface FixedU128 extends UInt {}
+
+/** @name FixedU64 */
+export interface FixedU64 extends UInt {}
+
+/** @name H1024 */
+export interface H1024 extends U8aFixed {}
+
+/** @name H128 */
+export interface H128 extends U8aFixed {}
+
 /** @name H160 */
 export interface H160 extends U8aFixed {}
+
+/** @name H2048 */
+export interface H2048 extends U8aFixed {}
 
 /** @name H256 */
 export interface H256 extends U8aFixed {}
 
 /** @name H512 */
 export interface H512 extends U8aFixed {}
+
+/** @name H64 */
+export interface H64 extends U8aFixed {}
 
 /** @name Hash */
 export interface Hash extends H256 {}
@@ -177,8 +140,14 @@ export interface Header extends Struct {
   readonly digest: Digest;
 }
 
+/** @name I32F32 */
+export interface I32F32 extends Int {}
+
 /** @name Index */
 export interface Index extends u32 {}
+
+/** @name IndicesLookupSource */
+export interface IndicesLookupSource extends GenericLookupSource {}
 
 /** @name Justification */
 export interface Justification extends Bytes {}
@@ -193,7 +162,7 @@ export interface KeyValue extends ITuple<[StorageKey, StorageData]> {}
 export interface LockIdentifier extends U8aFixed {}
 
 /** @name LookupSource */
-export interface LookupSource extends Address {}
+export interface LookupSource extends IndicesLookupSource {}
 
 /** @name LookupTarget */
 export interface LookupTarget extends AccountId {}
@@ -202,7 +171,13 @@ export interface LookupTarget extends AccountId {}
 export interface ModuleId extends LockIdentifier {}
 
 /** @name Moment */
-export interface Moment extends u64 {}
+export interface Moment extends UInt {}
+
+/** @name MultiAddress */
+export interface MultiAddress extends GenericMultiAddress {}
+
+/** @name OpaqueCall */
+export interface OpaqueCall extends Bytes {}
 
 /** @name OracleKey */
 export interface OracleKey extends CurrencyId {}
@@ -213,6 +188,22 @@ export interface OracleValue extends Price {}
 /** @name Origin */
 export interface Origin extends DoNotConstruct {}
 
+/** @name OriginCaller */
+export interface OriginCaller extends Enum {
+  readonly isSystem: boolean;
+  readonly asSystem: SystemOrigin;
+}
+
+/** @name PalletsOrigin */
+export interface PalletsOrigin extends OriginCaller {}
+
+/** @name PalletVersion */
+export interface PalletVersion extends Struct {
+  readonly major: u16;
+  readonly minor: u8;
+  readonly patch: u8;
+}
+
 /** @name Pays */
 export interface Pays extends Enum {
   readonly isYes: boolean;
@@ -220,16 +211,19 @@ export interface Pays extends Enum {
 }
 
 /** @name Perbill */
-export interface Perbill extends u32 {}
+export interface Perbill extends UInt {}
 
 /** @name Percent */
-export interface Percent extends u8 {}
+export interface Percent extends UInt {}
 
 /** @name Permill */
-export interface Permill extends u32 {}
+export interface Permill extends UInt {}
 
 /** @name Perquintill */
-export interface Perquintill extends u64 {}
+export interface Perquintill extends UInt {}
+
+/** @name PerU16 */
+export interface PerU16 extends UInt {}
 
 /** @name Phantom */
 export interface Phantom extends Null {}
@@ -240,12 +234,18 @@ export interface PhantomData extends Null {}
 /** @name PreRuntime */
 export interface PreRuntime extends ITuple<[ConsensusEngineId, Bytes]> {}
 
-/** @name ProxyType */
-export interface ProxyType extends Enum {
-  readonly isAny: boolean;
-  readonly isNonTransfer: boolean;
-  readonly isGovernance: boolean;
-  readonly isStaking: boolean;
+/** @name Releases */
+export interface Releases extends Enum {
+  readonly isV1: boolean;
+  readonly isV2: boolean;
+  readonly isV3: boolean;
+  readonly isV4: boolean;
+  readonly isV5: boolean;
+  readonly isV6: boolean;
+  readonly isV7: boolean;
+  readonly isV8: boolean;
+  readonly isV9: boolean;
+  readonly isV10: boolean;
 }
 
 /** @name RuntimeDbWeight */
@@ -260,9 +260,6 @@ export interface Seal extends ITuple<[ConsensusEngineId, Bytes]> {}
 /** @name SealV0 */
 export interface SealV0 extends ITuple<[u64, Signature]> {}
 
-/** @name Share */
-export interface Share extends u128 {}
-
 /** @name SignedBlock */
 export interface SignedBlock extends Struct {
   readonly block: Block;
@@ -272,8 +269,17 @@ export interface SignedBlock extends Struct {
 /** @name StorageData */
 export interface StorageData extends Bytes {}
 
+/** @name TransactionPriority */
+export interface TransactionPriority extends u64 {}
+
+/** @name U32F32 */
+export interface U32F32 extends UInt {}
+
 /** @name ValidatorId */
 export interface ValidatorId extends AccountId {}
+
+/** @name ValidatorIdOf */
+export interface ValidatorIdOf extends ValidatorId {}
 
 /** @name Weight */
 export interface Weight extends u64 {}

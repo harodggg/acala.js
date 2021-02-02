@@ -1,29 +1,29 @@
 import { Observable, combineLatest } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { CurrencyId, Balance, AccountId, DebitBalance } from '@acala-network/types/interfaces';
 import { ApiInterfaceRx } from '@polkadot/api/types';
-import { memo } from '../utils/memo';
+
+import { CurrencyId, AccountId, Position } from '@acala-network/types/interfaces';
+import { memo } from '@polkadot/api-derive/util';
+
 import { DerivedUserLoan } from '../types/loan';
-import { getCollateralCurrencyIds } from '../helps/token';
+import { getAllCollateralCurrencyIds } from '../utils';
 
 /**
  * @name loan
  * @description get user loan information includes debit value and collateral value
  * @param {(AccountId | string)} account
- * @param {(CurrencyId | string)} token
+ * @param {(CurrencyId | string)} currency
  */
-export function loan (
+export function loan(
+  instanceId: string,
   api: ApiInterfaceRx
-): (account: AccountId | string, token: CurrencyId | string) => Observable<DerivedUserLoan> {
-  return memo((account: AccountId | string, token: CurrencyId | string) =>
-    combineLatest([
-      /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-      api.query.loans.debits<DebitBalance>(token, account),
-      api.query.loans.collaterals<Balance>(account, token)
-    ]).pipe(
+): (account: AccountId | string, currency: CurrencyId) => Observable<DerivedUserLoan> {
+  return memo(instanceId, (account: AccountId | string, currency: CurrencyId) =>
+    api.query.loans.positions<Position>(currency, account).pipe(
       map((result) => {
-        const [debits, collaterals] = result;
-        return { account, token, debits: debits, collaterals };
+        const { debit, collateral } = result;
+
+        return { account, currency, debit, collateral };
       })
     )
   );
@@ -33,14 +33,15 @@ export function loan (
  * @name allLoans
  * @description get all user loans information includes debit value and collateral value
  * @param {(AccountId | string)} account
- * @param {(CurrencyId | string)} token
  */
-export function allLoans (
+export function allLoans(
+  instanceId: string,
   api: ApiInterfaceRx
-): (account: AccountId | string, token: CurrencyId | string) => Observable<DerivedUserLoan[]> {
-  return memo((account: AccountId | string) => {
-    const currencyIds = getCollateralCurrencyIds(api);
-    const loanQuery = loan(api);
-    return combineLatest(currencyIds.map((currencyId) => loanQuery(account, currencyId)));
+): (account: AccountId | string) => Observable<DerivedUserLoan[]> {
+  return memo(instanceId, (account: AccountId | string) => {
+    const collateralCurrencyIds = getAllCollateralCurrencyIds(api);
+    const loanQuery = loan(instanceId, api);
+
+    return combineLatest(collateralCurrencyIds.map((currency) => loanQuery(account, currency)));
   });
 }

@@ -1,13 +1,14 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import { Metadata } from '@polkadot/types';
+import { Metadata } from '@polkadot/metadata';
 import { TypeRegistry } from '@polkadot/types/create';
 import { generateInterfaceTypes } from '@polkadot/typegen/generate/interfaceRegistry';
 import { generateTsDef } from '@polkadot/typegen/generate/tsDef';
-import generateConst from '@polkadot/typegen/generate/consts';
-import generateQuery from '@polkadot/typegen/generate/query';
-import generateTx from '@polkadot/typegen/generate/tx';
+import { generateDefaultConsts } from '@polkadot/typegen/generate/consts';
+import { generateDefaultQuery } from '@polkadot/typegen/generate/query';
+import { generateDefaultTx } from '@polkadot/typegen/generate/tx';
 import { registerDefinitions } from '@polkadot/typegen/util';
+import generateMobx from '@open-web3/api-mobx/scripts/mobx';
 import metaHex from '../src/metadata/static-latest';
 
 import * as defaultDefinations from '@polkadot/types/interfaces/definitions';
@@ -18,14 +19,17 @@ import * as acalaDefinations from '../src/interfaces/definitions';
 
 // Only keep our own modules to avoid confllicts with the one provided by polkadot.js
 // TODO: make an issue on polkadot.js
-function filterModules (names: string[], defs: any): string {
+function filterModules(names: string[], defs: any): string {
   const registry = new TypeRegistry();
   registerDefinitions(registry, defs);
   const metadata = new Metadata(registry, metaHex);
 
+  // hack https://github.com/polkadot-js/api/issues/2687#issuecomment-705342442
+  metadata.asLatest.toJSON();
+
   const filtered = metadata.toJSON() as any;
 
-  filtered.metadata.V11.modules = filtered.metadata.V11.modules.filter(({ name }: any) => names.includes(name));
+  filtered.metadata.V12.modules = filtered.metadata.V12.modules.filter(({ name }: any) => names.includes(name));
 
   return new Metadata(registry, filtered).toHex();
 }
@@ -53,6 +57,7 @@ const metadata = filterModules(
     'Currencies',
     'Dex',
     'EmergencyShutdown',
+    'Evm',
     'Homa',
     'HomaTreasury',
     'Honzon',
@@ -71,7 +76,9 @@ const metadata = filterModules(
 
 generateTsDef(definations, 'packages/types/src/interfaces', '@acala-network/types/interfaces');
 generateInterfaceTypes(definations, 'packages/types/src/interfaces/augment-types.ts');
-generateConst('packages/types/src/interfaces/augment-api-consts.ts', metadata, definations);
+generateDefaultConsts('packages/types/src/interfaces/augment-api-consts.ts', metadata, definations);
 
-generateTx('packages/types/src/interfaces/augment-api-tx.ts', metadata, definations);
-generateQuery('packages/types/src/interfaces/augment-api-query.ts', metadata, definations);
+generateDefaultTx('packages/types/src/interfaces/augment-api-tx.ts', metadata, definations);
+generateDefaultQuery('packages/types/src/interfaces/augment-api-query.ts', metadata, definations);
+
+generateMobx('packages/types/src/interfaces/augment-api-mobx.ts', metaHex, definations);

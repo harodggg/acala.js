@@ -8,11 +8,10 @@ describe('fixed 128 constructor', () => {
     const c = new Fixed18(new BigNumber(1));
     expect(a).toEqual(b);
     expect(a).toEqual(c);
-    /* eslint-disable @typescript-eslint/ban-ts-ignore */
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     const d = new Fixed18(); // test for no params
     expect(d).toEqual(Fixed18.ZERO);
-    /* eslint-enable @typescript-eslint/ban-ts-ignore */
   });
   test('from parts should work', () => {
     const a = Fixed18.fromParts(1);
@@ -31,6 +30,17 @@ describe('fixed 128 constructor', () => {
     expect(a).toEqual(b);
     expect(c).toEqual(Fixed18.ZERO);
   });
+});
+
+describe('toFixed should work', () => {
+  const a = Fixed18.fromNatural(0.123456789);
+  const b = Fixed18.fromNatural(0.00000000001);
+
+  expect(a.toFixed(6)).toEqual('0.123456');
+  expect(a.toFixed(9)).toEqual('0.123456789');
+  expect(b.toFixed(11)).toEqual('0.00000000001');
+  expect(b.toFixed(20)).toEqual('0.00000000001');
+  expect(b.toString(11)).toEqual('1e-11');
 });
 
 describe('fixed 128 operation', () => {

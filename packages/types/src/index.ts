@@ -1,41 +1,32 @@
+import {
+  typesBundle as acalaTypesBundle,
+  types as acalaTypes,
+  typesAlias as acalaTypeAlias,
+  rpc as acalaRpc,
+  signedExtensions as acalaSignedExtensions
+} from '@acala-network/type-definitions';
+import {
+  OverrideBundleType,
+  OverrideModuleType,
+  RegistryTypes,
+  DefinitionRpc,
+  DefinitionRpcSub
+} from '@polkadot/types/types';
+
+import './interfaces/augment-api';
 import './interfaces/augment-api-consts';
 import './interfaces/augment-api-query';
 import './interfaces/augment-api-tx';
-import './interfaces/augment-api';
 import './interfaces/augment-types';
 
-import { RegistryTypes } from '@polkadot/types/types';
-import polkadotJSONRpc from '@polkadot/types/interfaces/jsonrpc';
-import * as ormlDefinations from '@open-web3/orml-types/interfaces/definitions';
+export * from './interfaces/augment-api-mobx';
 
-import * as acalaDefinations from './interfaces/definitions';
-import jsonrpc from './interfaces/jsonrpc';
+export const types: RegistryTypes = acalaTypes;
 
-// FIXME: currently we cannot override this in runtime definations because the code generation script cannot handle overrides
-// This will make it behave correctly in runtime, but wrong types in TS defination.
-const additionalOverride = {
-  types: {
-    Keys: 'SessionKeys2'
-  }
-};
+export const rpc: Record<string, Record<string, DefinitionRpc | DefinitionRpcSub>> = acalaRpc;
 
-export const allDefinitions = {
-  ...ormlDefinations,
-  ...acalaDefinations,
-  additionalOverride
-};
+export const typesAlias: Record<string, OverrideModuleType> = acalaTypeAlias;
 
-export const allJSONRpc = {
-  ...polkadotJSONRpc,
-  ...jsonrpc
-};
+export const typesBundle = (acalaTypesBundle as unknown) as OverrideBundleType;
 
-export const types: RegistryTypes = Object.values(allDefinitions)
-  .map(({ types }) => types)
-  .reduce((all, types) => Object.assign(all, types), {});
-
-export const typeChain = {
-  'Acala Mandala TC3': {
-    Weight: 'u32'
-  }
-};
+export const signedExtensions = acalaSignedExtensions;

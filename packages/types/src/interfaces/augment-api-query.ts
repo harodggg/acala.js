@@ -1,320 +1,227 @@
 // Auto-generated via `yarn polkadot-types-from-chain`, do not edit
 /* eslint-disable */
 
-import { AnyNumber, ITuple, Observable } from '@polkadot/types/types';
-import { Option, Vec } from '@polkadot/types/codec';
-import { bool, u32 } from '@polkadot/types/primitive';
-import { CollateralAuctionItem, DebitAuctionItem, SurplusAuctionItem } from '@acala-network/types/interfaces/auctionManager';
-import { RiskManagementParams } from '@acala-network/types/interfaces/cdpEngine';
-import { BondingLedger } from '@acala-network/types/interfaces/homaCouncli';
-import { AirDropCurrencyId, CurrencyId } from '@acala-network/types/interfaces/primitives';
-import { AccountId, AuctionId, AuctionIdOf, Balance, BlockNumber, DebitBalance, OracleKey, Share } from '@acala-network/types/interfaces/runtime';
-import { PolkadotAccountId } from '@acala-network/types/interfaces/stakingPool';
-import { ExchangeRate, Rate } from '@acala-network/types/interfaces/support';
-import { CallOf } from '@open-web3/orml-types/interfaces/authority';
-import { OrderedSet, TimestampedValueOf } from '@open-web3/orml-types/interfaces/oracle';
-import { Price } from '@open-web3/orml-types/interfaces/prices';
-import { AuctionInfo, DispatchId } from '@open-web3/orml-types/interfaces/traits';
-import { AccountData, BalanceLock } from '@polkadot/types/interfaces/balances';
-import { AuthorityId } from '@polkadot/types/interfaces/consensus';
-import { EraIndex, MomentOf } from '@polkadot/types/interfaces/staking';
-import { ApiTypes } from '@polkadot/api/types';
+import type { Option, Vec, bool, u32 } from '@polkadot/types';
+import type { AnyNumber, ITuple, Observable } from '@polkadot/types/types';
+import type { CollateralAuctionItem, DebitAuctionItem, SurplusAuctionItem } from '@acala-network/types/interfaces/auctionManager';
+import type { RiskManagementParams } from '@acala-network/types/interfaces/cdpEngine';
+import type { TradingPairStatus } from '@acala-network/types/interfaces/dex';
+import type { Position } from '@acala-network/types/interfaces/loans';
+import type { BondingLedger } from '@acala-network/types/interfaces/nomineesElection';
+import type { AirDropCurrencyId, AuctionId, CurrencyId, TradingPair } from '@acala-network/types/interfaces/primitives';
+import type { AccountId, Balance, BlockNumber } from '@acala-network/types/interfaces/runtime';
+import type { Ledger, Params, PolkadotAccountId, SubAccountStatus } from '@acala-network/types/interfaces/stakingPool';
+import type { ExchangeRate, Rate } from '@acala-network/types/interfaces/support';
+import type { AuctionInfo, Price } from '@open-web3/orml-types/interfaces/traits';
+import type { AccountData, BalanceLock } from '@polkadot/types/interfaces/balances';
+import type { EraIndex } from '@polkadot/types/interfaces/staking';
+import type { ApiTypes } from '@polkadot/api/types';
 
 declare module '@polkadot/api/types/storage' {
   export interface AugmentedQueries<ApiType> {
-    accounts: {
-      [index: string]: QueryableStorageEntry<ApiType>;
-      /**
-       * Mapping from account id to flag for free transfer.
-       **/
-      freeTransferEnabledAccounts: AugmentedQuery<ApiType, (arg: AccountId | string | Uint8Array) => Observable<Option<bool>>> & QueryableStorageEntry<ApiType>;
-      /**
-       * Mapping from account id to free transfer records, record moment when a transfer tx occurs.
-       **/
-      lastFreeTransfers: AugmentedQuery<ApiType, (arg: AccountId | string | Uint8Array) => Observable<Vec<MomentOf>>> & QueryableStorageEntry<ApiType>;
-    };
     airDrop: {
-      [index: string]: QueryableStorageEntry<ApiType>;
-      airDrops: AugmentedQueryDoubleMap<ApiType, (key1: AccountId | string | Uint8Array, key2: AirDropCurrencyId | 'KAR'|'ACA' | number | Uint8Array) => Observable<Balance>> & QueryableStorageEntry<ApiType>;
+      [key: string]: QueryableStorageEntry<ApiType>;
+      airDrops: AugmentedQueryDoubleMap<ApiType, (key1: AccountId | string | Uint8Array, key2: AirDropCurrencyId | 'KAR' | 'ACA' | number | Uint8Array) => Observable<Balance>, [AccountId, AirDropCurrencyId]> & QueryableStorageEntry<ApiType, [AccountId, AirDropCurrencyId]>;
     };
     auction: {
-      [index: string]: QueryableStorageEntry<ApiType>;
-      auctionEndTime: AugmentedQueryDoubleMap<ApiType, (key1: BlockNumber | AnyNumber | Uint8Array, key2: AuctionId | AnyNumber | Uint8Array) => Observable<Option<ITuple<[]>>>> & QueryableStorageEntry<ApiType>;
-      auctions: AugmentedQuery<ApiType, (arg: AuctionId | AnyNumber | Uint8Array) => Observable<Option<AuctionInfo>>> & QueryableStorageEntry<ApiType>;
-      auctionsIndex: AugmentedQuery<ApiType, () => Observable<AuctionId>> & QueryableStorageEntry<ApiType>;
+      [key: string]: QueryableStorageEntry<ApiType>;
+      /**
+       * Index auctions by end time.
+       **/
+      auctionEndTime: AugmentedQueryDoubleMap<ApiType, (key1: BlockNumber | AnyNumber | Uint8Array, key2: AuctionId | AnyNumber | Uint8Array) => Observable<Option<ITuple<[]>>>, [BlockNumber, AuctionId]> & QueryableStorageEntry<ApiType, [BlockNumber, AuctionId]>;
+      /**
+       * Stores on-going and future auctions. Closed auction are removed.
+       **/
+      auctions: AugmentedQuery<ApiType, (arg: AuctionId | AnyNumber | Uint8Array) => Observable<Option<AuctionInfo>>, [AuctionId]> & QueryableStorageEntry<ApiType, [AuctionId]>;
+      /**
+       * Track the next auction ID.
+       **/
+      auctionsIndex: AugmentedQuery<ApiType, () => Observable<AuctionId>, []> & QueryableStorageEntry<ApiType, []>;
     };
     auctionManager: {
-      [index: string]: QueryableStorageEntry<ApiType>;
+      [key: string]: QueryableStorageEntry<ApiType>;
       /**
        * Mapping from auction id to collateral auction info
        **/
-      collateralAuctions: AugmentedQuery<ApiType, (arg: AuctionIdOf | AnyNumber | Uint8Array) => Observable<Option<CollateralAuctionItem>>> & QueryableStorageEntry<ApiType>;
+      collateralAuctions: AugmentedQuery<ApiType, (arg: AuctionId | AnyNumber | Uint8Array) => Observable<Option<CollateralAuctionItem>>, [AuctionId]> & QueryableStorageEntry<ApiType, [AuctionId]>;
       /**
        * Mapping from auction id to debit auction info
        **/
-      debitAuctions: AugmentedQuery<ApiType, (arg: AuctionIdOf | AnyNumber | Uint8Array) => Observable<Option<DebitAuctionItem>>> & QueryableStorageEntry<ApiType>;
-      /**
-       * System shutdown flag
-       **/
-      isShutdown: AugmentedQuery<ApiType, () => Observable<bool>> & QueryableStorageEntry<ApiType>;
+      debitAuctions: AugmentedQuery<ApiType, (arg: AuctionId | AnyNumber | Uint8Array) => Observable<Option<DebitAuctionItem>>, [AuctionId]> & QueryableStorageEntry<ApiType, [AuctionId]>;
       /**
        * Mapping from auction id to surplus auction info
        **/
-      surplusAuctions: AugmentedQuery<ApiType, (arg: AuctionIdOf | AnyNumber | Uint8Array) => Observable<Option<SurplusAuctionItem>>> & QueryableStorageEntry<ApiType>;
+      surplusAuctions: AugmentedQuery<ApiType, (arg: AuctionId | AnyNumber | Uint8Array) => Observable<Option<SurplusAuctionItem>>, [AuctionId]> & QueryableStorageEntry<ApiType, [AuctionId]>;
       /**
-       * Record of the total collateral amount of all ative collateral auctions under specific collateral type
-       * CollateralType -> TotalAmount
+       * Record of the total collateral amount of all active collateral auctions
+       * under specific collateral type CollateralType -> TotalAmount
        **/
-      totalCollateralInAuction: AugmentedQuery<ApiType, (arg: CurrencyId | 'ACA'|'AUSD'|'DOT'|'XBTC'|'LDOT' | number | Uint8Array) => Observable<Balance>> & QueryableStorageEntry<ApiType>;
+      totalCollateralInAuction: AugmentedQuery<ApiType, (arg: CurrencyId | { Token: any } | { DEXShare: any } | { ERC20: any } | string | Uint8Array) => Observable<Balance>, [CurrencyId]> & QueryableStorageEntry<ApiType, [CurrencyId]>;
       /**
-       * Record of total fix amount of all ative debit auctions
+       * Record of total fix amount of all active debit auctions
        **/
-      totalDebitInAuction: AugmentedQuery<ApiType, () => Observable<Balance>> & QueryableStorageEntry<ApiType>;
+      totalDebitInAuction: AugmentedQuery<ApiType, () => Observable<Balance>, []> & QueryableStorageEntry<ApiType, []>;
       /**
-       * Record of total surplus amount of all ative surplus auctions
+       * Record of total surplus amount of all active surplus auctions
        **/
-      totalSurplusInAuction: AugmentedQuery<ApiType, () => Observable<Balance>> & QueryableStorageEntry<ApiType>;
+      totalSurplusInAuction: AugmentedQuery<ApiType, () => Observable<Balance>, []> & QueryableStorageEntry<ApiType, []>;
       /**
-       * Record of total target sales of all ative collateral auctions
+       * Record of total target sales of all active collateral auctions
        **/
-      totalTargetInAuction: AugmentedQuery<ApiType, () => Observable<Balance>> & QueryableStorageEntry<ApiType>;
+      totalTargetInAuction: AugmentedQuery<ApiType, () => Observable<Balance>, []> & QueryableStorageEntry<ApiType, []>;
     };
     cdpEngine: {
-      [index: string]: QueryableStorageEntry<ApiType>;
+      [key: string]: QueryableStorageEntry<ApiType>;
       /**
        * Mapping from collateral type to its risk management params
        **/
-      collateralParams: AugmentedQuery<ApiType, (arg: CurrencyId | 'ACA'|'AUSD'|'DOT'|'XBTC'|'LDOT' | number | Uint8Array) => Observable<RiskManagementParams>> & QueryableStorageEntry<ApiType>;
+      collateralParams: AugmentedQuery<ApiType, (arg: CurrencyId | { Token: any } | { DEXShare: any } | { ERC20: any } | string | Uint8Array) => Observable<RiskManagementParams>, [CurrencyId]> & QueryableStorageEntry<ApiType, [CurrencyId]>;
       /**
-       * Mapping from collateral type to its exchange rate of debit units and debit value
+       * Mapping from collateral type to its exchange rate of debit units and
+       * debit value
        **/
-      debitExchangeRate: AugmentedQuery<ApiType, (arg: CurrencyId | 'ACA'|'AUSD'|'DOT'|'XBTC'|'LDOT' | number | Uint8Array) => Observable<Option<ExchangeRate>>> & QueryableStorageEntry<ApiType>;
+      debitExchangeRate: AugmentedQuery<ApiType, (arg: CurrencyId | { Token: any } | { DEXShare: any } | { ERC20: any } | string | Uint8Array) => Observable<Option<ExchangeRate>>, [CurrencyId]> & QueryableStorageEntry<ApiType, [CurrencyId]>;
       /**
        * Global stability fee rate for all types of collateral
        **/
-      globalStabilityFee: AugmentedQuery<ApiType, () => Observable<Rate>> & QueryableStorageEntry<ApiType>;
-      /**
-       * System shutdown flag
-       **/
-      isShutdown: AugmentedQuery<ApiType, () => Observable<bool>> & QueryableStorageEntry<ApiType>;
+      globalStabilityFee: AugmentedQuery<ApiType, () => Observable<Rate>, []> & QueryableStorageEntry<ApiType, []>;
     };
     cdpTreasury: {
-      [index: string]: QueryableStorageEntry<ApiType>;
+      [key: string]: QueryableStorageEntry<ApiType>;
       /**
        * The maximum amount of collateral amount for sale per collateral auction
        **/
-      collateralAuctionMaximumSize: AugmentedQuery<ApiType, (arg: CurrencyId | 'ACA'|'AUSD'|'DOT'|'XBTC'|'LDOT' | number | Uint8Array) => Observable<Balance>> & QueryableStorageEntry<ApiType>;
+      collateralAuctionMaximumSize: AugmentedQuery<ApiType, (arg: CurrencyId | { Token: any } | { DEXShare: any } | { ERC20: any } | string | Uint8Array) => Observable<Balance>, [CurrencyId]> & QueryableStorageEntry<ApiType, [CurrencyId]>;
       /**
-       * The fixed amount of stable coin per surplus auction wants to get
+       * Current total debit value of system. It's not same as debit in CDP
+       * engine, it is the bad debt of the system.
        **/
-      debitAuctionFixedSize: AugmentedQuery<ApiType, () => Observable<Balance>> & QueryableStorageEntry<ApiType>;
-      /**
-       * Current total debit value of system. It's not same as debit in CDP engine,
-       * it is the bad debt of the system.
-       **/
-      debitPool: AugmentedQuery<ApiType, () => Observable<Balance>> & QueryableStorageEntry<ApiType>;
-      /**
-       * Initial amount of native token for sale per debit auction
-       **/
-      initialAmountPerDebitAuction: AugmentedQuery<ApiType, () => Observable<Balance>> & QueryableStorageEntry<ApiType>;
-      /**
-       * System shutdown flag
-       **/
-      isShutdown: AugmentedQuery<ApiType, () => Observable<bool>> & QueryableStorageEntry<ApiType>;
-      /**
-       * The fixed amount of stable coin for sale per surplus auction
-       **/
-      surplusAuctionFixedSize: AugmentedQuery<ApiType, () => Observable<Balance>> & QueryableStorageEntry<ApiType>;
-      /**
-       * The buffer size of surplus pool, the system will process the surplus through
-       * surplus auction when above this value
-       **/
-      surplusBufferSize: AugmentedQuery<ApiType, () => Observable<Balance>> & QueryableStorageEntry<ApiType>;
-      /**
-       * Current total surplus of system.
-       **/
-      surplusPool: AugmentedQuery<ApiType, () => Observable<Balance>> & QueryableStorageEntry<ApiType>;
-      /**
-       * Mapping from collateral type to collateral assets amount kept in CDP treasury
-       **/
-      totalCollaterals: AugmentedQuery<ApiType, (arg: CurrencyId | 'ACA'|'AUSD'|'DOT'|'XBTC'|'LDOT' | number | Uint8Array) => Observable<Balance>> & QueryableStorageEntry<ApiType>;
+      debitPool: AugmentedQuery<ApiType, () => Observable<Balance>, []> & QueryableStorageEntry<ApiType, []>;
     };
     dex: {
-      [index: string]: QueryableStorageEntry<ApiType>;
+      [key: string]: QueryableStorageEntry<ApiType>;
       /**
-       * System shutdown flag
+       * Liquidity pool for TradingPair.
        **/
-      isShutdown: AugmentedQuery<ApiType, () => Observable<bool>> & QueryableStorageEntry<ApiType>;
+      liquidityPool: AugmentedQuery<ApiType, (arg: TradingPair) => Observable<ITuple<[Balance, Balance]>>, [TradingPair]> & QueryableStorageEntry<ApiType, [TradingPair]>;
       /**
-       * Incentive reward rate for different currency type
-       * CurrencyType -> IncentiveRate
+       * Provision of TradingPair by AccountId.
        **/
-      liquidityIncentiveRate: AugmentedQuery<ApiType, (arg: CurrencyId | 'ACA'|'AUSD'|'DOT'|'XBTC'|'LDOT' | number | Uint8Array) => Observable<Rate>> & QueryableStorageEntry<ApiType>;
+      provisioningPool: AugmentedQueryDoubleMap<ApiType, (key1: TradingPair, key2: AccountId | string | Uint8Array) => Observable<ITuple<[Balance, Balance]>>, [TradingPair, AccountId]> & QueryableStorageEntry<ApiType, [TradingPair, AccountId]>;
       /**
-       * Liquidity pool, which is the trading pair for specific currency type to base currency type.
-       * CurrencyType -> (CurrencyAmount, BaseCurrencyAmount)
+       * Status for TradingPair.
        **/
-      liquidityPool: AugmentedQuery<ApiType, (arg: CurrencyId | 'ACA'|'AUSD'|'DOT'|'XBTC'|'LDOT' | number | Uint8Array) => Observable<ITuple<[Balance, Balance]>>> & QueryableStorageEntry<ApiType>;
-      /**
-       * Shares records indexed by currency type and account id
-       * CurrencyType -> Owner -> ShareAmount
-       **/
-      shares: AugmentedQueryDoubleMap<ApiType, (key1: CurrencyId | 'ACA'|'AUSD'|'DOT'|'XBTC'|'LDOT' | number | Uint8Array, key2: AccountId | string | Uint8Array) => Observable<Share>> & QueryableStorageEntry<ApiType>;
-      /**
-       * Total interest(include total withdrawn) and total withdrawn interest for different currency type
-       * CurrencyType -> (TotalInterest, TotalWithdrawnInterest)
-       **/
-      totalInterest: AugmentedQuery<ApiType, (arg: CurrencyId | 'ACA'|'AUSD'|'DOT'|'XBTC'|'LDOT' | number | Uint8Array) => Observable<ITuple<[Balance, Balance]>>> & QueryableStorageEntry<ApiType>;
-      /**
-       * Total shares amount of liquidity pool specificed by currency type
-       * CurrencyType -> TotalSharesAmount
-       **/
-      totalShares: AugmentedQuery<ApiType, (arg: CurrencyId | 'ACA'|'AUSD'|'DOT'|'XBTC'|'LDOT' | number | Uint8Array) => Observable<Share>> & QueryableStorageEntry<ApiType>;
-      /**
-       * Withdrawn interest indexed by currency type and account id
-       * CurrencyType -> Owner -> WithdrawnInterest
-       **/
-      withdrawnInterest: AugmentedQueryDoubleMap<ApiType, (key1: CurrencyId | 'ACA'|'AUSD'|'DOT'|'XBTC'|'LDOT' | number | Uint8Array, key2: AccountId | string | Uint8Array) => Observable<Balance>> & QueryableStorageEntry<ApiType>;
+      tradingPairStatuses: AugmentedQuery<ApiType, (arg: TradingPair) => Observable<TradingPairStatus>, [TradingPair]> & QueryableStorageEntry<ApiType, [TradingPair]>;
     };
     emergencyShutdown: {
-      [index: string]: QueryableStorageEntry<ApiType>;
+      [key: string]: QueryableStorageEntry<ApiType>;
       /**
        * Open final redemption flag
        **/
-      canRefund: AugmentedQuery<ApiType, () => Observable<bool>> & QueryableStorageEntry<ApiType>;
+      canRefund: AugmentedQuery<ApiType, () => Observable<bool>, []> & QueryableStorageEntry<ApiType, []>;
       /**
        * Emergency shutdown flag
        **/
-      isShutdown: AugmentedQuery<ApiType, () => Observable<bool>> & QueryableStorageEntry<ApiType>;
+      isShutdown: AugmentedQuery<ApiType, () => Observable<bool>, []> & QueryableStorageEntry<ApiType, []>;
     };
     honzon: {
-      [index: string]: QueryableStorageEntry<ApiType>;
+      [key: string]: QueryableStorageEntry<ApiType>;
       /**
        * The authorization relationship map from
        * Authorizer -> (CollateralType, Authorizee) -> Authorized
        **/
-      authorization: AugmentedQueryDoubleMap<ApiType, (key1: AccountId | string | Uint8Array, key2: ITuple<[CurrencyId, AccountId]> | [CurrencyId | 'ACA' | 'AUSD' | 'DOT' | 'XBTC' | 'LDOT' | number | Uint8Array, AccountId | string | Uint8Array]) => Observable<bool>> & QueryableStorageEntry<ApiType>;
-      /**
-       * System shutdown flag
-       **/
-      isShutdown: AugmentedQuery<ApiType, () => Observable<bool>> & QueryableStorageEntry<ApiType>;
+      authorization: AugmentedQueryDoubleMap<ApiType, (key1: AccountId | string | Uint8Array, key2: ITuple<[CurrencyId, AccountId]> | [CurrencyId | { Token: any } | { DEXShare: any } | { ERC20: any } | string | Uint8Array, AccountId | string | Uint8Array]) => Observable<bool>, [AccountId, ITuple<[CurrencyId, AccountId]>]> & QueryableStorageEntry<ApiType, [AccountId, ITuple<[CurrencyId, AccountId]>]>;
     };
     loans: {
-      [index: string]: QueryableStorageEntry<ApiType>;
+      [key: string]: QueryableStorageEntry<ApiType>;
       /**
-       * The collateral asset amount of CDPs, map from
-       * Owner -> CollateralType -> CollateralAmount
+       * The collateralized debit positions, map from
+       * Owner -> CollateralType -> Position
        **/
-      collaterals: AugmentedQueryDoubleMap<ApiType, (key1: AccountId | string | Uint8Array, key2: CurrencyId | 'ACA'|'AUSD'|'DOT'|'XBTC'|'LDOT' | number | Uint8Array) => Observable<Balance>> & QueryableStorageEntry<ApiType>;
+      positions: AugmentedQueryDoubleMap<ApiType, (key1: CurrencyId | { Token: any } | { DEXShare: any } | { ERC20: any } | string | Uint8Array, key2: AccountId | string | Uint8Array) => Observable<Position>, [CurrencyId, AccountId]> & QueryableStorageEntry<ApiType, [CurrencyId, AccountId]>;
       /**
-       * The debit amount records of CDPs, map from
-       * CollateralType -> Owner -> DebitAmount
+       * The total collateralized debit positions, map from
+       * CollateralType -> Position
        **/
-      debits: AugmentedQueryDoubleMap<ApiType, (key1: CurrencyId | 'ACA'|'AUSD'|'DOT'|'XBTC'|'LDOT' | number | Uint8Array, key2: AccountId | string | Uint8Array) => Observable<DebitBalance>> & QueryableStorageEntry<ApiType>;
-      /**
-       * The total collateral asset amount, map from
-       * CollateralType -> TotalCollateralAmount
-       **/
-      totalCollaterals: AugmentedQuery<ApiType, (arg: CurrencyId | 'ACA'|'AUSD'|'DOT'|'XBTC'|'LDOT' | number | Uint8Array) => Observable<Balance>> & QueryableStorageEntry<ApiType>;
-      /**
-       * The total debit amount, map from
-       * CollateralType -> TotalDebitAmount
-       **/
-      totalDebits: AugmentedQuery<ApiType, (arg: CurrencyId | 'ACA'|'AUSD'|'DOT'|'XBTC'|'LDOT' | number | Uint8Array) => Observable<DebitBalance>> & QueryableStorageEntry<ApiType>;
+      totalPositions: AugmentedQuery<ApiType, (arg: CurrencyId | { Token: any } | { DEXShare: any } | { ERC20: any } | string | Uint8Array) => Observable<Position>, [CurrencyId]> & QueryableStorageEntry<ApiType, [CurrencyId]>;
     };
     nomineesElection: {
-      [index: string]: QueryableStorageEntry<ApiType>;
-      currentEra: AugmentedQuery<ApiType, () => Observable<EraIndex>> & QueryableStorageEntry<ApiType>;
-      ledger: AugmentedQuery<ApiType, (arg: AccountId | string | Uint8Array) => Observable<BondingLedger>> & QueryableStorageEntry<ApiType>;
-      nominations: AugmentedQuery<ApiType, (arg: AccountId | string | Uint8Array) => Observable<Vec<PolkadotAccountId>>> & QueryableStorageEntry<ApiType>;
-      nominees: AugmentedQuery<ApiType, () => Observable<Vec<PolkadotAccountId>>> & QueryableStorageEntry<ApiType>;
-      votes: AugmentedQuery<ApiType, (arg: PolkadotAccountId | string | Uint8Array) => Observable<Balance>> & QueryableStorageEntry<ApiType>;
-    };
-    oracle: {
-      [index: string]: QueryableStorageEntry<ApiType>;
-      /**
-       * If an oracle operator has feed a value in this block
-       **/
-      hasDispatched: AugmentedQuery<ApiType, () => Observable<OrderedSet>> & QueryableStorageEntry<ApiType>;
-      /**
-       * True if Self::values(key) is up to date, otherwise the value is stale
-       **/
-      isUpdated: AugmentedQuery<ApiType, (arg: OracleKey | 'ACA'|'AUSD'|'DOT'|'XBTC'|'LDOT' | number | Uint8Array) => Observable<bool>> & QueryableStorageEntry<ApiType>;
-      /**
-       * The current members of the collective. This is stored sorted (just by value).
-       **/
-      members: AugmentedQuery<ApiType, () => Observable<OrderedSet>> & QueryableStorageEntry<ApiType>;
-      nonces: AugmentedQuery<ApiType, (arg: AccountId | string | Uint8Array) => Observable<u32>> & QueryableStorageEntry<ApiType>;
-      /**
-       * Raw values for each oracle operators
-       **/
-      rawValues: AugmentedQueryDoubleMap<ApiType, (key1: AccountId | string | Uint8Array, key2: OracleKey | 'ACA'|'AUSD'|'DOT'|'XBTC'|'LDOT' | number | Uint8Array) => Observable<Option<TimestampedValueOf>>> & QueryableStorageEntry<ApiType>;
-      /**
-       * Session key for oracle operators
-       **/
-      sessionKeys: AugmentedQuery<ApiType, (arg: AccountId | string | Uint8Array) => Observable<Option<AuthorityId>>> & QueryableStorageEntry<ApiType>;
-      /**
-       * Combined value, may not be up to date
-       **/
-      values: AugmentedQuery<ApiType, (arg: OracleKey | 'ACA'|'AUSD'|'DOT'|'XBTC'|'LDOT' | number | Uint8Array) => Observable<Option<TimestampedValueOf>>> & QueryableStorageEntry<ApiType>;
+      [key: string]: QueryableStorageEntry<ApiType>;
+      currentEra: AugmentedQuery<ApiType, () => Observable<EraIndex>, []> & QueryableStorageEntry<ApiType, []>;
+      ledger: AugmentedQuery<ApiType, (arg: AccountId | string | Uint8Array) => Observable<BondingLedger>, [AccountId]> & QueryableStorageEntry<ApiType, [AccountId]>;
+      nominations: AugmentedQuery<ApiType, (arg: AccountId | string | Uint8Array) => Observable<Vec<PolkadotAccountId>>, [AccountId]> & QueryableStorageEntry<ApiType, [AccountId]>;
+      nominees: AugmentedQuery<ApiType, () => Observable<Vec<PolkadotAccountId>>, []> & QueryableStorageEntry<ApiType, []>;
+      votes: AugmentedQuery<ApiType, (arg: PolkadotAccountId | string | Uint8Array) => Observable<Balance>, [PolkadotAccountId]> & QueryableStorageEntry<ApiType, [PolkadotAccountId]>;
     };
     polkadotBridge: {
-      [index: string]: QueryableStorageEntry<ApiType>;
-      available: AugmentedQuery<ApiType, () => Observable<Balance>> & QueryableStorageEntry<ApiType>;
-      bonded: AugmentedQuery<ApiType, () => Observable<Balance>> & QueryableStorageEntry<ApiType>;
-      currentEra: AugmentedQuery<ApiType, () => Observable<EraIndex>> & QueryableStorageEntry<ApiType>;
-      eraStartBlockNumber: AugmentedQuery<ApiType, () => Observable<BlockNumber>> & QueryableStorageEntry<ApiType>;
-      forcedEra: AugmentedQuery<ApiType, () => Observable<Option<BlockNumber>>> & QueryableStorageEntry<ApiType>;
-      mockRewardRate: AugmentedQuery<ApiType, () => Observable<Option<Rate>>> & QueryableStorageEntry<ApiType>;
-      unbonding: AugmentedQuery<ApiType, () => Observable<Vec<ITuple<[Balance, EraIndex]>>>> & QueryableStorageEntry<ApiType>;
+      [key: string]: QueryableStorageEntry<ApiType>;
+      currentEra: AugmentedQuery<ApiType, () => Observable<EraIndex>, []> & QueryableStorageEntry<ApiType, []>;
+      eraStartBlockNumber: AugmentedQuery<ApiType, () => Observable<BlockNumber>, []> & QueryableStorageEntry<ApiType, []>;
+      forcedEra: AugmentedQuery<ApiType, () => Observable<Option<BlockNumber>>, []> & QueryableStorageEntry<ApiType, []>;
+      subAccounts: AugmentedQuery<ApiType, (arg: u32 | AnyNumber | Uint8Array) => Observable<SubAccountStatus>, [u32]> & QueryableStorageEntry<ApiType, [u32]>;
     };
     prices: {
-      [index: string]: QueryableStorageEntry<ApiType>;
+      [key: string]: QueryableStorageEntry<ApiType>;
       /**
        * Mapping from currency id to it's locked price
        **/
-      lockedPrice: AugmentedQuery<ApiType, (arg: CurrencyId | 'ACA'|'AUSD'|'DOT'|'XBTC'|'LDOT' | number | Uint8Array) => Observable<Option<Price>>> & QueryableStorageEntry<ApiType>;
-    };
-    scheduleUpdate: {
-      [index: string]: QueryableStorageEntry<ApiType>;
-      delayedNormalDispatches: AugmentedQueryDoubleMap<ApiType, (key1: BlockNumber | AnyNumber | Uint8Array, key2: DispatchId | AnyNumber | Uint8Array) => Observable<Option<ITuple<[Option<AccountId>, CallOf, DispatchId]>>>> & QueryableStorageEntry<ApiType>;
-      delayedOperationalDispatches: AugmentedQueryDoubleMap<ApiType, (key1: BlockNumber | AnyNumber | Uint8Array, key2: DispatchId | AnyNumber | Uint8Array) => Observable<Option<ITuple<[Option<AccountId>, CallOf, DispatchId]>>>> & QueryableStorageEntry<ApiType>;
-      nextId: AugmentedQuery<ApiType, () => Observable<DispatchId>> & QueryableStorageEntry<ApiType>;
+      lockedPrice: AugmentedQuery<ApiType, (arg: CurrencyId | { Token: any } | { DEXShare: any } | { ERC20: any } | string | Uint8Array) => Observable<Option<Price>>, [CurrencyId]> & QueryableStorageEntry<ApiType, [CurrencyId]>;
     };
     stakingPool: {
-      [index: string]: QueryableStorageEntry<ApiType>;
-      claimedUnbond: AugmentedQueryDoubleMap<ApiType, (key1: AccountId | string | Uint8Array, key2: EraIndex | AnyNumber | Uint8Array) => Observable<Balance>> & QueryableStorageEntry<ApiType>;
-      currentEra: AugmentedQuery<ApiType, () => Observable<EraIndex>> & QueryableStorageEntry<ApiType>;
-      freeUnbonded: AugmentedQuery<ApiType, () => Observable<Balance>> & QueryableStorageEntry<ApiType>;
-      nextEraUnbond: AugmentedQuery<ApiType, () => Observable<ITuple<[Balance, Balance]>>> & QueryableStorageEntry<ApiType>;
-      totalBonded: AugmentedQuery<ApiType, () => Observable<Balance>> & QueryableStorageEntry<ApiType>;
-      totalClaimedUnbonded: AugmentedQuery<ApiType, () => Observable<Balance>> & QueryableStorageEntry<ApiType>;
-      unbonding: AugmentedQuery<ApiType, (arg: EraIndex | AnyNumber | Uint8Array) => Observable<ITuple<[Balance, Balance]>>> & QueryableStorageEntry<ApiType>;
-      unbondingToFree: AugmentedQuery<ApiType, () => Observable<Balance>> & QueryableStorageEntry<ApiType>;
+      [key: string]: QueryableStorageEntry<ApiType>;
+      /**
+       * Current era index of Polkadot.
+       **/
+      currentEra: AugmentedQuery<ApiType, () => Observable<EraIndex>, []> & QueryableStorageEntry<ApiType, []>;
+      /**
+       * Unbond on next era beginning by AccountId.
+       * AccountId => Unbond
+       **/
+      nextEraUnbonds: AugmentedQuery<ApiType, (arg: AccountId | string | Uint8Array) => Observable<Balance>, [AccountId]> & QueryableStorageEntry<ApiType, [AccountId]>;
+      /**
+       * The ledger of staking pool.
+       **/
+      stakingPoolLedger: AugmentedQuery<ApiType, () => Observable<Ledger>, []> & QueryableStorageEntry<ApiType, []>;
+      /**
+       * The params of staking pool.
+       **/
+      stakingPoolParams: AugmentedQuery<ApiType, () => Observable<Params>, []> & QueryableStorageEntry<ApiType, []>;
+      /**
+       * The records of unbonding.
+       * ExpiredEraIndex => (TotalUnbounding, ClaimedUnbonding,
+       * InitialClaimedUnbonding)
+       **/
+      unbonding: AugmentedQuery<ApiType, (arg: EraIndex | AnyNumber | Uint8Array) => Observable<ITuple<[Balance, Balance, Balance]>>, [EraIndex]> & QueryableStorageEntry<ApiType, [EraIndex]>;
+      /**
+       * The records of unbonding by AccountId.
+       * AccountId, ExpiredEraIndex => Unbounding
+       **/
+      unbondings: AugmentedQueryDoubleMap<ApiType, (key1: AccountId | string | Uint8Array, key2: EraIndex | AnyNumber | Uint8Array) => Observable<Balance>, [AccountId, EraIndex]> & QueryableStorageEntry<ApiType, [AccountId, EraIndex]>;
     };
     tokens: {
-      [index: string]: QueryableStorageEntry<ApiType>;
+      [key: string]: QueryableStorageEntry<ApiType>;
       /**
        * The balance of a token type under an account.
        * 
        * NOTE: If the total is ever zero, decrease account ref account.
        * 
-       * NOTE: This is only used in the case that this module is used to store balances.
+       * NOTE: This is only used in the case that this module is used to store
+       * balances.
        **/
-      accounts: AugmentedQueryDoubleMap<ApiType, (key1: AccountId | string | Uint8Array, key2: CurrencyId | 'ACA'|'AUSD'|'DOT'|'XBTC'|'LDOT' | number | Uint8Array) => Observable<AccountData>> & QueryableStorageEntry<ApiType>;
+      accounts: AugmentedQueryDoubleMap<ApiType, (key1: AccountId | string | Uint8Array, key2: CurrencyId | { Token: any } | { DEXShare: any } | { ERC20: any } | string | Uint8Array) => Observable<AccountData>, [AccountId, CurrencyId]> & QueryableStorageEntry<ApiType, [AccountId, CurrencyId]>;
       /**
        * Any liquidity locks of a token type under an account.
        * NOTE: Should only be accessed when setting, changing and freeing a lock.
        **/
-      locks: AugmentedQueryDoubleMap<ApiType, (key1: AccountId | string | Uint8Array, key2: CurrencyId | 'ACA'|'AUSD'|'DOT'|'XBTC'|'LDOT' | number | Uint8Array) => Observable<Vec<BalanceLock>>> & QueryableStorageEntry<ApiType>;
+      locks: AugmentedQueryDoubleMap<ApiType, (key1: AccountId | string | Uint8Array, key2: CurrencyId | { Token: any } | { DEXShare: any } | { ERC20: any } | string | Uint8Array) => Observable<Vec<BalanceLock>>, [AccountId, CurrencyId]> & QueryableStorageEntry<ApiType, [AccountId, CurrencyId]>;
       /**
        * The total issuance of a token type.
        **/
-      totalIssuance: AugmentedQuery<ApiType, (arg: CurrencyId | 'ACA'|'AUSD'|'DOT'|'XBTC'|'LDOT' | number | Uint8Array) => Observable<Balance>> & QueryableStorageEntry<ApiType>;
+      totalIssuance: AugmentedQuery<ApiType, (arg: CurrencyId | { Token: any } | { DEXShare: any } | { ERC20: any } | string | Uint8Array) => Observable<Balance>, [CurrencyId]> & QueryableStorageEntry<ApiType, [CurrencyId]>;
     };
   }
 
   export interface QueryableStorage<ApiType extends ApiTypes> extends AugmentedQueries<ApiType> {
-    [index: string]: QueryableModuleStorage<ApiType>;
+    [key: string]: QueryableModuleStorage<ApiType>;
   }
 }

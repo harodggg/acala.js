@@ -1,10 +1,7 @@
 // Auto-generated via `yarn polkadot-types-from-defs`, do not edit
 /* eslint-disable */
 
-import { Balance } from '@acala-network/types/interfaces/runtime';
-
-/** @name DepositBalanceOf */
-export interface DepositBalanceOf extends Balance {}
+import type { Balance } from '@acala-network/types/interfaces/runtime';
 
 /** @name PalletBalanceOf */
 export interface PalletBalanceOf extends Balance {}
